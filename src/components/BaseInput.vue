@@ -1,47 +1,59 @@
 <template>
-  <label :for="uuid" v-if="label">{{ label }}</label>
+  <label
+    v-if="label"
+    :for="uuid"
+  >
+    {{ label }}
+  </label>
   <input
-    v-bind="$attrs"
+    class="field"
+    v-bind="{
+      ...$attrs,
+      onInput: updateValue
+    }"
+    :id="uuid"
     :value="modelValue"
     :placeholder="label"
-    @input="$emit('update:modelValue', $event.target.value)"
-    class="field"
-    :id="uuid"
-    :aria-describedby="error?`${uuid}-error`:null"
-    :aria-invalid="error?true:null"
+    :aria-describedby="error ? `${uuid}-error` : null"
+    :aria-invalid="error ? true : false"
+    :class="{ error }"
   >
-  <p
-    aria-live="assertive "
+  <BaseErrorMessage
     v-if="error"
-    class="errorMessage"
     :id="`${uuid}-error`"
   >
     {{ error }}
-  </p>
+  </BaseErrorMessage>
 </template>
-<script>
-import UniqueID from '../features/UniqueID';
-export default{
-  props:{
-    label:{
-      type:String,
-      default:''
-    },
-    modelValue:{
-      type:[String,Number],
-      default:''
-    },
-    error: {
-      type: String,
-      default: ''
-    }
-  },
-  setup(){
-    const uuid = UniqueID().getID()
 
-    return {
-      uuid
-    }
-  }
+<script>
+import SetupFormComponent from '../features/SetupFormComponent'
+import UniqueID from '../features/UniqueID'
+import BaseErrorMessage from './BaseErrorMessage.vue'
+
+export default {
+    props: {
+        label: {
+            type: String,
+            default: ''
+        },
+        error: {
+            type: String,
+            default: ''
+        },
+        modelValue: {
+            type: [String, Number],
+            default: ''
+        }
+    },
+    setup(props, context) {
+        const { updateValue } = SetupFormComponent(props, context);
+        const uuid = UniqueID().getID();
+        return {
+            updateValue,
+            uuid
+        };
+    },
+    components: { BaseErrorMessage, BaseErrorMessage }
 }
 </script>

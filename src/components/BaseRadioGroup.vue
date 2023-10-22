@@ -1,49 +1,44 @@
 <template>
-  <component 
-    v-for="option in options"
-    :key="option.value"
-    :is="vertical? 'div' : 'span'"
-    :class="{
-      horizontal:!vertical
-    }"
-  >
-  
-    <BaseRadio
-      :label="option.label"
-      :value="option.value"
-      :name="name"
-      :modelValue="modelValue"
-      @update:modelValue="$emit('update:modelValue', $event)"
-    />
-  </component>
+  <div>
+    <component
+      v-for="opts in options"
+      :key="opts.value"
+      :is="vertical ? 'div' : 'span'"
+      :style="vertical ? '' : 'margin-right: 20px;'"
+    >
+      <BaseRadio
+        :name="name"
+        :label="opts.label"
+        :modelValue="modelValue"
+        :value="opts.value"
+        @update:modelValue="$emit('update:modelValue', $event)"
+      />
+    </component>
+  </div>
 </template>
+
 <script>
 import BaseRadio from './BaseRadio.vue';
 
-export default{
+export default {
     props: {
+        vertical: {
+            type: Boolean,
+            default: false
+        },
+        modelValue: {
+            type: [String, Number],
+            required: true
+        },
         options: {
-          type: Array,
-          required: true
+            type: Array,
+            required: true
         },
-        name:{
-          type:String,
-          required:true
-        },
-        modelValue:{
-          type: [String, Number],
-          required: true
-        },
-        vertical:{
-          type:Boolean,
-          default: false
+        name: {
+            type: String,
+            required: true
         }
     },
     components: { BaseRadio }
 }
 </script>
-<style>
-.horizontal{
-  margin-right: 20px;
-}
-</style>

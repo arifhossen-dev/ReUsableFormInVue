@@ -1,24 +1,52 @@
 <template>
   <input
-    type="checkbox"
+    v-bind="{ ...$attrs, onChange: updateValue }"
     :checked="modelValue"
-    @change="$emit('update:modelValue',$event.target.checked)"
+    :id="uuid"
+    type="checkbox"
     class="field"
   />
-  <label v-if="label">{{ label }}</label>
+  <label
+    :for="uuid"
+    v-if="label"
+  >
+    {{ label }}
+  </label>
+  <BaseErrorMessage
+    v-if="error"
+    :id="`${uuid}-error`"
+  >
+    {{ error }}
+  </BaseErrorMessage>
 </template>
 
 <script>
-export default{
-  props:{
-    label:{
-      type:String,
-      default: ''
+import UniqueID from '../features/UniqueID'
+import SetupFormComponent from '../features/SetupFormComponent'
+import BaseErrorMessage from './BaseErrorMessage.vue'
+
+export default {
+    props: {
+        label: {
+            type: String,
+            default: ''
+        },
+        modelValue: {
+            type: Boolean
+        },
+        error: {
+            type: String,
+            default: ''
+        }
     },
-    modelValue:{
-      type:Boolean,
-      default:false
-    }
-  }
+    setup(props, context) {
+        const uuid = UniqueID().getID();
+        const { updateValue } = SetupFormComponent(props, context);
+        return {
+            updateValue,
+            uuid
+        };
+    },
+    components: { BaseErrorMessage }
 }
 </script>
